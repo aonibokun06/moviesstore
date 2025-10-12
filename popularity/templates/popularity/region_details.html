@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'map' %}">Regional Map</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ template_data.region.name }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="h2 fw-bold mb-2">Popular Movies in {{ template_data.region.name }}</h1>
+            <p class="text-muted mb-0">Based on recent purchases and views</p>
+        </div>
+    </div>
+
+    {% if template_data.popular_movies %}
+        <div class="row">
+            {% for popularity in template_data.popular_movies %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        {% if popularity.movie.image %}
+                            <img src="{{ popularity.movie.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ popularity.movie.name }}</h5>
+                            <p class="card-text">{{ popularity.movie.description|truncatewords:15 }}</p>
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span class="badge bg-success">
+                                    {{ popularity.purchase_count }} Purchases
+                                </span>
+                                <span class="badge bg-info">
+                                    {{ popularity.view_count }} Views
+                                </span>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="fw-bold text-primary">
+                                    Total: {{ popularity.total_popularity }}
+                                </span>
+                                <a href="{% url 'movies.show' popularity.movie.id %}" class="btn btn-primary btn-sm">
+                                    View Movie
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-footer text-muted small">
+                            Last updated: {{ popularity.last_updated|date:"M d, Y H:i" }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card text-center py-5">
+                    <div class="card-body">
+                        <h5 class="card-title">No Data Available</h5>
+                        <p class="card-text text-muted">No popularity data available for this region yet.</p>
+                        <a href="{% url 'map' %}" class="btn btn-primary">Back to Map</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock content %}

@@ -1,14 +1,94 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
+
+<style>
+.rating-input {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.rating-input input[type="radio"] {
+  display: none;
+}
+
+.rating-input .star-label {
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #ddd;
+  transition: color 0.2s;
+}
+
+.rating-input .star-label:hover,
+.rating-input .star-label:hover ~ .star-label,
+.rating-input input[type="radio"]:checked ~ .star-label {
+  color: #ffc107;
+}
+
+.stars-display {
+  display: flex;
+  align-items: center;
+}
+
+.stars-display i {
+  font-size: 1.2rem;
+}
+</style>
 <div class="p-3">
   <div class="container">
     <div class="row mt-3">
       <div class="col-md-6 mx-auto mb-3">
         <h2>{{ template_data.movie.name }}</h2>
         <hr />
-        <p><b>Description:</b> {{template_data.movie.description }}</p>
-        <p><b>Price:</b> ${{template_data.movie.price }}</p>
+        
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <p><b>Description:</b> {{template_data.movie.description }}</p>
+            <p><b>Price:</b> ${{template_data.movie.price }}</p>
+          </div>
+          <div class="col-md-6">
+            <div class="rating-display mb-2">
+              <span class="text-muted">Average Rating:</span>
+              <div class="stars-display">
+                {% for i in "12345" %}
+                  {% if forloop.counter <= template_data.movie.average_rating_display %}
+                    <i class="fas fa-star text-warning"></i>
+                  {% elif forloop.counter == template_data.movie.average_rating_display|add:1 and template_data.movie.has_half_star %}
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                  {% else %}
+                    <i class="far fa-star text-warning"></i>
+                  {% endif %}
+                {% endfor %}
+                <span class="ms-2">{{ template_data.movie.average_rating|floatformat:1 }}/5</span>
+                <span class="text-muted">({{ template_data.movie.total_ratings }} ratings)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {% if user.is_authenticated %}
+        <div class="rating-section mb-4">
+          <h5>Rate this movie:</h5>
+          <form method="post" action="{% url 'movies.rate' template_data.movie.id %}">
+            {% csrf_token %}
+            <div class="rating-input">
+              {% for i in "54321" %}
+                <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" 
+                       {% if template_data.user_rating == i|add:0 %}checked{% endif %}>
+                <label for="star{{ i }}" class="star-label">
+                  <i class="fas fa-star"></i>
+                </label>
+              {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm mt-2">Submit Rating</button>
+          </form>
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+          <a href="{% url 'accounts.login' %}">Login</a> to rate this movie.
+        </div>
+        {% endif %}
         <p class="card-text">
             <form method="post"
               action="{% url 'cart.add' id=template_data.movie.id cart_id='cart_1' %}">

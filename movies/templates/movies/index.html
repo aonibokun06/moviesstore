@@ -33,6 +33,20 @@
             <a href="{% url 'movies.show' id=movie.id %}" class="btn bg-dark text-white">
               {{ movie.name }}
             </a>
+            <div class="mt-2">
+              <div class="stars-display justify-content-center">
+                {% for i in "12345" %}
+                  {% if forloop.counter <= movie.average_rating_display %}
+                    <i class="fas fa-star text-warning"></i>
+                  {% elif forloop.counter == movie.average_rating_display|add:1 and movie.has_half_star %}
+                    <i class="fas fa-star-half-alt text-warning"></i>
+                  {% else %}
+                    <i class="far fa-star text-warning"></i>
+                  {% endif %}
+                {% endfor %}
+                <span class="ms-1 small text-muted">({{ movie.total_ratings }})</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
