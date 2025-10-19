@@ -16,10 +16,21 @@ def region_details(request, region_id):
     region = get_object_or_404(Region, id=region_id)
     popular_movies = MoviePopularity.objects.filter(region=region).order_by('-purchase_count')[:10]
     
+    # Find the movie with highest total popularity for trending tag
+    trending_movie_id = None
+    if popular_movies:
+        max_popularity = 0
+        for movie_pop in popular_movies:
+            total_pop = movie_pop.purchase_count + movie_pop.view_count
+            if total_pop > max_popularity:
+                max_popularity = total_pop
+                trending_movie_id = movie_pop.movie.id
+    
     template_data = {
         'title': f'Popular Movies in {region.name}',
         'region': region,
         'popular_movies': popular_movies,
+        'trending_movie_id': trending_movie_id,
     }
     return render(request, 'popularity/region_details.html', {'template_data': template_data})
 

@@ -78,6 +78,28 @@ def purchase(request, cart_id):
         item.order = order
         item.quantity = cart[str(movie.id)]
         item.save()
+        
+        # Update popularity data for purchase tracking
+        try:
+            from accounts.models import UserProfile
+            from popularity.models import Region, MoviePopularity
+            user_profile = UserProfile.objects.get(user=request.user)
+            user_region_name = user_profile.region
+            
+            if user_region_name:
+                try:
+                    region = Region.objects.get(name=user_region_name)
+                    popularity, created = MoviePopularity.objects.get_or_create(
+                        movie=movie,
+                        region=region,
+                        defaults={'purchase_count': 0, 'view_count': 0}
+                    )
+                    popularity.purchase_count += int(cart[str(movie.id)])
+                    popularity.save()
+                except:
+                    pass
+        except:
+            pass
     
     # Clear the specific cart after purchase
     request.session['carts'][cart_id] = {}
