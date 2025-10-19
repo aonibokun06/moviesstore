@@ -132,5 +132,8 @@ STATICFILES_DIRS = [
     BASE_DIR / 'moviesstore/static/',
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_URL = '/static/'
+STATIC_ROOT = '/home/aonibokun06/project-2340/staticfiles'
+
 MEDIA_URL = '/media/'
+MEDIA_ROOT = '/home/aonibokun06/project-2340/media'
