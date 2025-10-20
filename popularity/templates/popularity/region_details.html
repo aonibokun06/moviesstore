@@ -13,7 +13,7 @@
             </nav>
         </div>
     </div>
-
+    #Popular Movies 
     <div class="row mb-4">
         <div class="col-12">
             <h1 class="h2 fw-bold mb-2">Popular Movies in {{ template_data.region.name }}</h1>
@@ -30,14 +30,7 @@
                             <img src="{{ popularity.movie.image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;">
                         {% endif %}
                         <div class="card-body">
-                            <h5 class="card-title">
-                                {{ popularity.movie.name }}
-                                {% if template_data.trending_movie_id == popularity.movie.id %}
-                                    <span class="badge bg-warning text-dark ms-2">
-                                        🔥 Trending
-                                    </span>
-                                {% endif %}
-                            </h5>
+                            <h5 class="card-title">{{ popularity.movie.name }}</h5>
                             <p class="card-text">{{ popularity.movie.description|truncatewords:15 }}</p>
                             
                             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -48,7 +41,7 @@
                                     {{ popularity.view_count }} Views
                                 </span>
                             </div>
-                            
+                            # More on Our display
                             <div class="d-flex justify-content-between align-items-center">
                                 <span class="fw-bold text-primary">
                                     Total: {{ popularity.total_popularity }}
